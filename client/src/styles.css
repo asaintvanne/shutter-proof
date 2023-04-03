@@ -1,0 +1,36 @@
+body {
+  min-height: 0;
+  padding-top: 4.5rem;
+}
+
+#mini-logo {
+  max-width: 40px;
+  margin-right: 20px;
+}
+
+.bg-dark {
+  background-color: #868686;
+}
+
+#not_connected {
+  text-align: center;
+}
+
+.jumbotron {
+  text-align: center;
+}
+
+.input-big, .btn-big {
+  margin-bottom: 0.5em;
+  width: 400px;
+}
+
+.jumbotron-gallery {
+  text-align: left;
+  padding: 1.5em;
+}
+
+.img-gallery {
+  max-width: 20em;
+  max-height: 20em;
+}

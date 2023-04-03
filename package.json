@@ -1,0 +1,19 @@
+{
+  "name": "shutter-proof",
+  "version": "1.0.0",
+  "description": "Shutter proof is a dApp thats helps photographers authenticate their works and manage rights.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asaintvanne/shutter-proof.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asaintvanne/shutter-proof/issues"
+  },
+  "homepage": "https://github.com/asaintvanne/shutter-proof#readme"
+}
