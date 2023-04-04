@@ -78,7 +78,7 @@ function Register() {
                     <div className="row">
                         <div className="col">
                           <input type="checkbox" name="cgv" checked={cgv} onChange={(e) => setCgv(e.target.checked)} />&nbsp;
-                          <label for="cgv"> J'accepte les CGV</label>
+                          <label htmlFor="cgv"> J'accepte les CGV</label>
                         </div>
                     </div>
                     <div className="row">

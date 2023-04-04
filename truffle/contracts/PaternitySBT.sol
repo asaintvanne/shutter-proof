@@ -4,33 +4,31 @@ pragma solidity 0.8.18;
 
 contract PaternitySBT {
 
-    struct Photography {
-        string title;
-        string description;
-        string ipfsHash;
-    }
-
     address public owner;
     uint256 public balance;
-    mapping(uint => Photography) tokens;
+    mapping(uint => string) tokens;
 
-    constructor(address _owner) {
+    event Mint(uint);
+
+    constructor(address _owner)
+    {
         owner = _owner;
     }
 
-    function mint(string calldata _title, string calldata _description, string calldata _urlHash) external returns(uint256) {
+    function mint(string calldata _urlHash) external returns(uint256)
+    {
         require(owner == msg.sender, "Not allowed to mint");
 
-        Photography memory photography = Photography(_title, _description, _urlHash);
-
         uint tokenId = balance;
-        tokens[tokenId] = photography;
+        tokens[tokenId] = _urlHash;
         balance += 1;
+
+        emit Mint(tokenId);
 
         return tokenId;
     }
 
-    function getPhotography(uint _tokenId) external view returns(Photography memory)
+    function getToken(uint _tokenId) external view returns(string memory)
     {
         require(_tokenId < balance, "Token doesn't exist");
         

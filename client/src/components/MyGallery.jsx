@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import useEth from "../contexts/EthContext/useEth";
 import { toast } from 'react-toastify';
@@ -17,13 +18,18 @@ function MyGallery() {
                 return contractSBT.methods.balance().call();
             })
             .then(async (balance) => {
+                const photos = [];
                 for (let i = 0; i < balance; i++) {
-                    const photo = await contractSBT.methods.getPhotography(i).call();
+                    const urlHash = await contractSBT.methods.getToken(i).call();
+                    const json = await axios({
+                        method: "get",
+                        url: "https://ipfs.io/ipfs/" + urlHash,
+                    });
                     photos.push({
                         id: i + 1,
-                        title: photo.title,
-                        description: photo.description,
-                        url: "https://ipfs.io/ipfs/" + photo.ipfsHash
+                        title: json.data.title,
+                        description: json.data.description,
+                        url: "https://ipfs.io/ipfs/" + json.data.image
                     });
                 }
                 setPhotos(photos);

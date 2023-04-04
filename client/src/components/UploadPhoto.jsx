@@ -6,9 +6,6 @@ import { toast } from 'react-toastify';
 import dotenv from 'react-dotenv';
 
 function UploadPhoto() {
-
-    console.log(2, dotenv.REACT_APP_PINATA_API_KEY);
-
     const [fileImg, setFileImg] = useState(null);
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
@@ -17,13 +14,11 @@ function UploadPhoto() {
     const { state: { contract, artifactSBT, web3, accounts } } = useEth();
 
     const sendFileToIPFS = async (e) => {
-        let ipfsHash = null;
 
         e.preventDefault();
 
         if (fileImg && title !== "" && desc !== "") {
 
-            
             setFormDisabled(true);
             const formData = new FormData();
             formData.append("file", fileImg);
@@ -38,7 +33,6 @@ function UploadPhoto() {
                 },
             })
             .then(result => {
-                ipfsHash = result.data.IpfsHash;
                 return axios({
                     method: "post",
                     url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
@@ -54,10 +48,10 @@ function UploadPhoto() {
                     },
                 });
             })
-            .then(async (response) => {
+            .then(async (result) => {
                 const contractSBTAddress = await contract.methods.getPaternitySBT(accounts[0]).call({ from: accounts[0] });
                 const contractSBT = new web3.eth.Contract(artifactSBT.abi, contractSBTAddress);
-                return contractSBT.methods.mint(title, desc, ipfsHash).send({ from: accounts[0] });
+                return contractSBT.methods.mint(result.data.IpfsHash).send({ from: accounts[0] });
             })
             .then(result => {
                 toast.success("La photo est authentifiée", {
@@ -71,9 +65,7 @@ function UploadPhoto() {
                 console.log(error);
             })
             .finally(() => {
-                console.log("Finally " + ipfsHash);
                 setFormDisabled(false);
-                ipfsHash = null;
             })
             ;
         } else {
