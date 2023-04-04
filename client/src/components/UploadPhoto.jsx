@@ -3,7 +3,11 @@ import { useState } from 'react';
 import useEth from "../contexts/EthContext/useEth";
 import { toast } from 'react-toastify';
 
+import dotenv from 'react-dotenv';
+
 function UploadPhoto() {
+
+    console.log(2, dotenv.REACT_APP_PINATA_API_KEY);
 
     const [fileImg, setFileImg] = useState(null);
     const [title, setTitle] = useState("");
@@ -18,17 +22,18 @@ function UploadPhoto() {
         e.preventDefault();
 
         if (fileImg && title !== "" && desc !== "") {
+
+            
             setFormDisabled(true);
             const formData = new FormData();
             formData.append("file", fileImg);
-
             axios({
                 method: "post",
                 url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
                 data: formData,
                 headers: {
-                    'pinata_api_key': process.env.REACT_APP_PINATA_API_KEY,
-                    'pinata_secret_api_key': process.env.REACT_APP_PINATA_API_SECRET,
+                    'pinata_api_key': dotenv.REACT_APP_PINATA_API_KEY,
+                    'pinata_secret_api_key': dotenv.REACT_APP_PINATA_API_SECRET,
                     "Content-Type": "multipart/form-data"
                 },
             })
@@ -44,8 +49,8 @@ function UploadPhoto() {
                         "author": accounts[0]
                     },
                     headers: {
-                        'pinata_api_key': process.env.REACT_APP_PINATA_API_KEY,
-                        'pinata_secret_api_key': process.env.REACT_APP_PINATA_API_SECRET,
+                        'pinata_api_key': dotenv.REACT_APP_PINATA_API_KEY,
+                        'pinata_secret_api_key': dotenv.REACT_APP_PINATA_API_SECRET,
                     },
                 });
             })
