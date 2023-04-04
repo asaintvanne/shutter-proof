@@ -20,9 +20,13 @@ body {
   text-align: center;
 }
 
-.input-big, .btn-big {
+.input-big, .btn-big, .textarea-big {
   margin-bottom: 0.5em;
   width: 400px;
+}
+
+.textarea-big {
+  height: 8em;
 }
 
 .jumbotron-gallery {

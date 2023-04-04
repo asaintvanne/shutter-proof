@@ -14,6 +14,7 @@ function Register() {
     const [name, setName] = useState("");
     const [siret, setSiret] = useState("");
     const [role, setRole] = useState("");
+    const [cgv, setCgv] = useState(false);
 
     const handleSiretChange = e => {
       if (/^\d+$|^$/.test(e.target.value) && e.target.value.length < 15) {
@@ -22,7 +23,7 @@ function Register() {
     };
 
     const register = e => {
-      if (name !== "" && siret !== "" && role !== "") {
+      if (name !== "" && siret !== "" && role !== "" && cgv) {
         const transformedSiret = web3.utils.padRight(web3.utils.fromAscii(siret), 14)
         contract.methods.register(name, transformedSiret, role).call({ from: accounts[0] })
           .then(response => {
@@ -35,7 +36,7 @@ function Register() {
             });
           })
           .catch(error => {
-            toast.error("Vous êtes désormais enregistré sur ShutterProof", {
+            toast.error("L'inscription a échoué", {
               position: toast.POSITION.TOP_LEFT
             });
           })
@@ -76,9 +77,16 @@ function Register() {
                     </div>
                     <div className="row">
                         <div className="col">
-                        <button onClick={register} className="btn btn-primary mt-1 btn-register">S'enregistrer</button>
+                          <input type="checkbox" name="cgv" checked={cgv} onChange={(e) => setCgv(e.target.checked)} />&nbsp;
+                          <label for="cgv"> J'accepte les CGV</label>
                         </div>
                     </div>
+                    <div className="row">
+                        <div className="col">
+                          <button onClick={register} className="btn btn-primary mt-1 btn-register">S'enregistrer</button>
+                        </div>
+                    </div>
+
                 </div>
             </main>
         </>

@@ -98,7 +98,7 @@ function UploadPhoto() {
                 </div>
                 <div className="row">
                     <div className="col">
-                        <textarea className='input-big' type="text" onChange={(e) => setDesc(e.target.value)} placeholder="Description" required value={desc} disabled={formDisabled} />
+                        <textarea className='textarea-big' type="text" onChange={(e) => setDesc(e.target.value)} placeholder="Description" required value={desc} disabled={formDisabled} />
                     </div>
                 </div>
                 <div className="row">
