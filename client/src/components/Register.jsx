@@ -10,6 +10,7 @@ function Register() {
 
   const { state: { contract, accounts, web3 } } = useEth();
   const { dispatch } = useApp();
+  
 
     const [name, setName] = useState("");
     const [siret, setSiret] = useState("");
@@ -29,13 +30,20 @@ function Register() {
           .then(response => {
             return contract.methods.register(name, transformedSiret, role).send({ from: accounts[0] })
           })
-          .then(isRegistered => {
-            dispatch({ type: actions.registration, data: isRegistered });
+          .then(response => {
+            dispatch({
+              type: actions.init,
+              data: { isRegistered: true, role: role }
+            });
             toast.success("Vous êtes désormais insrit sur ShutterProof", {
               position: toast.POSITION.TOP_LEFT
             });
           })
           .catch(error => {
+            dispatch({
+              type: actions.init,
+              data: { isRegistered: false, role: null }
+            });
             toast.error("L'inscription a échoué", {
               position: toast.POSITION.TOP_LEFT
             });

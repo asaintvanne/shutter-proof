@@ -11,18 +11,17 @@ function AppProvider({ children }) {
   const init =
     async () => {
       if (contract) {
-        contract.methods.isRegistered().call({ from: accounts[0] })
-          .then(isRegistered => {
-            console.log('IS REGISTERED ' + isRegistered);
+        contract.methods.getUser().call({ from: accounts[0] })
+          .then(user => {
             dispatch({
               type: actions.init,
-              data: { isRegistered: isRegistered }
+              data: { isRegistered: user.registered, role: user.role }
             });
           })
           .catch(error => {
             dispatch({
               type: actions.init,
-              data: { isRegistered: false }
+              data: { isRegistered: false, role: null }
             });
           });
       }

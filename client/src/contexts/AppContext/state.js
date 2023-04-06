@@ -4,7 +4,8 @@ const actions = {
   };
   
   const initialState = {
-    isRegitered: null
+    isRegitered: null,
+    role: null
   };
   
   const reducer = (state, action) => {

@@ -21,7 +21,7 @@ window.env = {
   "USER": "a.saintvanne",
   "COMMAND_MODE": "unix2003",
   "npm_config_globalconfig": "/Users/a.saintvanne/.nvm/versions/node/v16.16.0/etc/npmrc",
-  "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.S69tOQtnaT/Listeners",
+  "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.WNq3lvACKN/Listeners",
   "__CF_USER_TEXT_ENCODING": "0x1F6:0x0:0x1",
   "npm_execpath": "/Users/a.saintvanne/.nvm/versions/node/v16.16.0/lib/node_modules/npm/bin/npm-cli.js",
   "PAGER": "less",

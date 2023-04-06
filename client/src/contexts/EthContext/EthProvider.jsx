@@ -7,8 +7,8 @@ function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const init = useCallback(
-    async (artifact, artifactSBT) => {
-      if (artifact && artifactSBT) {
+    async (artifact, artifactSBT, artifactSaleNFT) => {
+      if (artifact && artifactSBT && artifactSaleNFT) {
         const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
         const accounts = await web3.eth.requestAccounts();
         const networkID = await web3.eth.net.getId();
@@ -22,7 +22,7 @@ function EthProvider({ children }) {
         }
         dispatch({
           type: actions.init,
-          data: { artifact, artifactSBT, web3, accounts, networkID, contract }
+          data: { artifact, artifactSBT, artifactSaleNFT, web3, accounts, networkID, contract }
         });
       }
     }, []);
@@ -32,7 +32,8 @@ function EthProvider({ children }) {
       try {
         const artifact = require("../../contracts/ShutterProof.json");
         const artifactSBT = require("../../contracts/PaternitySBT.json");
-        init(artifact, artifactSBT);
+        const artifactSaleNFT = require("../../contracts/ExclusiveRightsNFT.json");
+        init(artifact, artifactSBT, artifactSaleNFT);
       } catch (err) {
         console.error(err);
       }
@@ -44,14 +45,14 @@ function EthProvider({ children }) {
   useEffect(() => {
     const events = ["chainChanged", "accountsChanged"];
     const handleChange = () => {
-      init(state.artifact, state.artifactSBT);
+      init(state.artifact, state.artifactSBT, state.artifactSaleNFT);
     };
 
     events.forEach(e => window.ethereum.on(e, handleChange));
     return () => {
       events.forEach(e => window.ethereum.removeListener(e, handleChange));
     };
-  }, [init, state.artifact, state.artifactSBT]);
+  }, [init, state.artifact, state.artifactSBT, state.artifactSaleNFT]);
 
   return (
     <EthContext.Provider value={{

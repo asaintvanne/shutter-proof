@@ -9,5 +9,4 @@ export default function AccountInfo() {
       Connecté sur {accounts?.length > 0 ? addressCut(accounts[0]) : ""}
     </div>
   );
-
 };
