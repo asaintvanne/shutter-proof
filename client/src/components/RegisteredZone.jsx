@@ -3,6 +3,7 @@ import useApp from "../contexts/AppContext/useApp";
 import AccountInfo from './AccountInfo.jsx';
 import MyGallery from "./MyGallery.jsx";
 import MySaleGallery from "./MySaleGallery.jsx";
+import SaleGallery from "./SaleGallery.jsx";
 import UploadPhoto from './UploadPhoto.jsx';
 import * as Roles from "../roles.js";
 import { buildIPFSUrl } from "../libs/ipfs_helper.js";
@@ -18,6 +19,7 @@ function RegisteredZone() {
         {role === Roles.Photographer && <Route path="/upload" element={<UploadPhoto />} />}
         {role === Roles.Photographer && <Route path="/my-gallery" element={<MyGallery />} />}
         <Route path="/my-sale-gallery" element={<MySaleGallery />} />
+        <Route path="/sale-gallery" element={<SaleGallery />} />
         <Route path="/*" element={<p>L'accès à cete page n'est pas autorisé.</p>} />
       </Routes>
     );
@@ -45,15 +47,8 @@ function RegisteredZone() {
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="/" id="dropdown2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Achat/Vente</a>
                             <div className="dropdown-menu" aria-labelledby="dropdown2">
-                                <a className="dropdown-item" href="/">Acheter des photos</a>
+                                <a className="dropdown-item" href="/sale-gallery">Acheter des photos</a>
                                 <a className="dropdown-item" href="/my-sale-gallery">Vendre mes photos</a>
-                            </div>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="/" id="dropdown3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Location</a>
-                            <div className="dropdown-menu" aria-labelledby="dropdown3">
-                                <a className="dropdown-item" href="/">Louer des photos</a>
-                                <a className="dropdown-item" href="/">Louer mes photos</a>
                             </div>
                         </li>
                     </ul>
