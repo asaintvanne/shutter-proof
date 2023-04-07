@@ -7,7 +7,7 @@ import { buildIPFSUrl } from "../libs/ipfs_helper.js";
 
 function MySaleGallery() {
 
-    const { state: { contract, artifactSBT, artifactSaleNFT, web3, accounts } } = useEth();
+    const { state: { contract, artifactSBT, artifactSaleNFT, web3, accounts, deployTx } } = useEth();
 
     const [photos, setPhotos] = useState({});
     const [prices, setPrices] = useState([]);
@@ -23,7 +23,56 @@ function MySaleGallery() {
                 return contractExclusiveRightsNFT.methods.isApprovedForAll(accounts[0], contract.options.address).call();
             })
             .then(isShutterProofApproved => {
+                console.log(isShutterProofApproved);
                 setApproved(isShutterProofApproved);
+                if (isShutterProofApproved) {
+                    contract.methods.getExclusiveRightsNFT().call({ from: accounts[0] })
+                        .then(contractExclusiveRightsNFTAddress => {
+                            console.log('HERE');
+                            contractExclusiveRightsNFT = new web3.eth.Contract(artifactSaleNFT.abi, contractExclusiveRightsNFTAddress);
+                            return contractExclusiveRightsNFT.getPastEvents("Transfer", {
+                                filter: {to: accounts[0]},
+                                fromBlock: deployTx.blockNumber,
+                                toBlock: "latest",
+                            });
+                        })
+                        .then(async (events) => {
+                            console.log(events);
+                            for (let i = 0; i < events.length; i++) {
+                                let tokenOwner = await contractExclusiveRightsNFT.methods.ownerOf(events[i].returnValues.tokenId).call();
+                                if (accounts[0] === tokenOwner) {
+                                    let sbt = await contractExclusiveRightsNFT.methods.getSBT(events[i].returnValues.tokenId).call();
+                                    const price = await contractExclusiveRightsNFT.methods.getPrice(events[i].returnValues.tokenId).call();
+                                    contractSBT = new web3.eth.Contract(artifactSBT.abi, sbt.sbtAddress);
+                                    let urlHash = await contractSBT.methods.getToken(sbt.tokenId).call();
+                                    const authorAddress = await contractSBT.methods.getOwner().call();
+                                    const author = await contract.methods.getUser(authorAddress).call();
+                                    const block = await web3.eth.getBlock(events[i].blockNumber);
+                                    const json = await axios({
+                                        method: "get",
+                                        url: buildIPFSUrl(urlHash),
+                                    });
+                                    photosArray[events[i].returnValues['tokenId']] = {
+                                        id: events[i].returnValues['tokenId'],
+                                        title: json.data.title,
+                                        author: author.name,
+                                        description: json.data.description,
+                                        url: buildIPFSUrl(json.data.image),
+                                        date: formatDate(block.timestamp),
+                                        price: parseInt(price)
+                                    };
+                                }
+                            }
+                            setPhotos(photosArray);
+                        })
+                        .catch(error => {
+                            toast.error("Erreur lors de la récupération des photos", {
+                                position: toast.POSITION.TOP_LEFT
+                            });
+                            console.log(error);
+                        })
+                    ;
+                }
             })
             .catch(error => {
                 toast.error("Erreur lors de la récupération du contrat", {
@@ -32,54 +81,7 @@ function MySaleGallery() {
                 console.log(error);
             })
         ;
-
-        if (isApproved) {
-            contract.methods.getExclusiveRightsNFT().call({ from: accounts[0] })
-                .then(contractExclusiveRightsNFTAddress => {
-                    contractExclusiveRightsNFT = new web3.eth.Contract(artifactSaleNFT.abi, contractExclusiveRightsNFTAddress);
-                    return contractExclusiveRightsNFT.getPastEvents("Transfer", {
-                        filter: {to: accounts[0]},
-                        fromBlock: 0,
-                        toBlock: "latest",
-                    });
-                })
-                .then(async (events) => {
-                    for (let i = 0; i < events.length; i++) {
-                        let tokenOwner = await contractExclusiveRightsNFT.methods.ownerOf(events[i].returnValues.tokenId).call();
-                        if (accounts[0] === tokenOwner) {
-                            let sbt = await contractExclusiveRightsNFT.methods.getSBT(events[i].returnValues.tokenId).call();
-                            const price = await contractExclusiveRightsNFT.methods.getPrice(events[i].returnValues.tokenId).call();
-                            contractSBT = new web3.eth.Contract(artifactSBT.abi, sbt.sbtAddress);
-                            let urlHash = await contractSBT.methods.getToken(sbt.tokenId).call();
-                            const authorAddress = await contractSBT.methods.getOwner().call();
-                            const author = await contract.methods.getUser(authorAddress).call();
-                            const block = await web3.eth.getBlock(events[i].blockNumber);
-                            const json = await axios({
-                                method: "get",
-                                url: buildIPFSUrl(urlHash),
-                            });
-                            photosArray[events[i].returnValues['tokenId']] = {
-                                id: events[i].returnValues['tokenId'],
-                                title: json.data.title,
-                                author: author.name,
-                                description: json.data.description,
-                                url: buildIPFSUrl(json.data.image),
-                                date: formatDate(block.timestamp),
-                                price: parseInt(price)
-                            };
-                        }
-                    }
-                    setPhotos(photosArray);
-                })
-                .catch(error => {
-                    toast.error("Erreur lors de la récupération des photos", {
-                        position: toast.POSITION.TOP_LEFT
-                    });
-                    console.log(error);
-                })
-            ;
-        }
-    }, [accounts]);
+    }, [accounts, isApproved]);
 
     const handlePriceChange = (e, photoId) => {
         if (/^\d+$|^$/.test(e.target.value)) {

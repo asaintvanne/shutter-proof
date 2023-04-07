@@ -7,7 +7,7 @@ import { buildIPFSUrl } from "../libs/ipfs_helper.js";
 
 function MyGallery() {
 
-    const { state: { contract, artifactSBT, web3, accounts } } = useEth();
+    const { state: { contract, artifactSBT, web3, accounts, deployTx } } = useEth();
 
     const [photos, setPhotos] = useState([]);
 
@@ -15,15 +15,16 @@ function MyGallery() {
         const photosArray = [];
         let contractSBT;
         contract.methods.getPaternitySBT(accounts[0]).call({ from: accounts[0] })
-            .then(contractSBTAddress => {
+            .then(async (contractSBTAddress) => {
                 contractSBT = new web3.eth.Contract(artifactSBT.abi, contractSBTAddress);
-
+                const networkID = await web3.eth.net.getId();
                 return contractSBT.getPastEvents("Mint", {
-                    fromBlock: 0,
+                    fromBlock: deployTx.blockNumber,
                     toBlock: "latest",
                 });
             })
             .then(async (events) => {
+                console.log(events);
                 for (let i = 0; i < events.length; i++) {
                     const urlHash = await contractSBT.methods.getToken(events[i].returnValues[0]).call();
                     const block = await web3.eth.getBlock(events[i].blockNumber);

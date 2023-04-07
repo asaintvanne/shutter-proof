@@ -7,7 +7,7 @@ import { buildIPFSUrl } from "../libs/ipfs_helper.js";
 
 function SaleGallery() {
 
-    const { state: { contract, artifactSBT, artifactSaleNFT, web3, accounts } } = useEth();
+    const { state: { contract, artifactSBT, artifactSaleNFT, web3, accounts, deployTx } } = useEth();
 
     const [photos, setPhotos] = useState({});
 
@@ -20,7 +20,7 @@ function SaleGallery() {
                 contractExclusiveRightsNFT = new web3.eth.Contract(artifactSaleNFT.abi, contractExclusiveRightsNFTAddress);
                 return contractExclusiveRightsNFT.getPastEvents("Transfer", {
                     filter: {from: 0},
-                    fromBlock: 0,
+                    fromBlock: deployTx.blockNumber,
                     toBlock: "latest",
                 });
             })

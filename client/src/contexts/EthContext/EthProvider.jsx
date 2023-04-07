@@ -13,16 +13,18 @@ function EthProvider({ children }) {
         const accounts = await web3.eth.requestAccounts();
         const networkID = await web3.eth.net.getId();
         const { abi } = artifact;
-        let address, contract;
+        let address, contract, deployTx;
         try {
           address = artifact.networks[networkID].address;
           contract = new web3.eth.Contract(abi, address);
+          const txhash = artifact.networks[networkID].transactionHash;
+          deployTx = await web3.eth.getTransaction(txhash);
         } catch (err) {
           console.error(err);
         }
         dispatch({
           type: actions.init,
-          data: { artifact, artifactSBT, artifactSaleNFT, web3, accounts, networkID, contract }
+          data: { artifact, artifactSBT, artifactSaleNFT, web3, accounts, networkID, contract, deployTx }
         });
       }
     }, []);
