@@ -11,7 +11,7 @@ function AppProvider({ children }) {
   const init =
     async () => {
       if (contract) {
-        contract.methods.getUser().call({ from: accounts[0] })
+        contract.methods.getUser(accounts[0]).call({ from: accounts[0] })
           .then(user => {
             dispatch({
               type: actions.init,

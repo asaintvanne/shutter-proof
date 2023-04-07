@@ -17,7 +17,6 @@ function MyGallery() {
         contract.methods.getPaternitySBT(accounts[0]).call({ from: accounts[0] })
             .then(async (contractSBTAddress) => {
                 contractSBT = new web3.eth.Contract(artifactSBT.abi, contractSBTAddress);
-                const networkID = await web3.eth.net.getId();
                 return contractSBT.getPastEvents("Mint", {
                     fromBlock: deployTx.blockNumber,
                     toBlock: "latest",
@@ -53,7 +52,8 @@ function MyGallery() {
 
     return (
         <>
-            {photos.map((photo) => (
+            <h1>Mes photos</h1>
+            {photos.length > 0 && photos.map((photo) => (
                 <div key={photo.id} className="jumbotron jumbotron-gallery">
                     <div className="row">
                         <div className="col-sm-4 text-center">
@@ -69,6 +69,8 @@ function MyGallery() {
                     </div>
                 </div>
             ))}
+
+            {photos.length === 0 && <p>Vous n'avez pas encore déposé une photo.</p>}
         </>
     )
 }

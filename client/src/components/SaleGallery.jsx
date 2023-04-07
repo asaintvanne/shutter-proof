@@ -87,7 +87,8 @@ function SaleGallery() {
 
     return (
         <>
-            {Object.keys(photos).map((i) => (
+            <h1>Les photos à vendre</h1>
+            {photos.length > 0 && Object.keys(photos).map((i) => (
                 <div key={photos[i].id} className="jumbotron jumbotron-gallery">
                     <div className="row">
                         <div className="col-sm-4 text-center">
@@ -107,6 +108,8 @@ function SaleGallery() {
                     </div>
                 </div>
             ))}
+
+            {photos.length === 0 && <p>Aucune photo n'est en vente.</p>}
         </>
     )
 }

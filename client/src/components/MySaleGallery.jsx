@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import useEth from "../contexts/EthContext/useEth";
 import { toast } from 'react-toastify';
-import { formatDate } from "../libs/format_date.js";
 import { buildIPFSUrl } from "../libs/ipfs_helper.js";
 
 function MySaleGallery() {
@@ -23,7 +22,6 @@ function MySaleGallery() {
                 return contractExclusiveRightsNFT.methods.isApprovedForAll(accounts[0], contract.options.address).call();
             })
             .then(isShutterProofApproved => {
-                console.log(isShutterProofApproved);
                 setApproved(isShutterProofApproved);
                 if (isShutterProofApproved) {
                     contract.methods.getExclusiveRightsNFT().call({ from: accounts[0] })
@@ -37,7 +35,6 @@ function MySaleGallery() {
                             });
                         })
                         .then(async (events) => {
-                            console.log(events);
                             for (let i = 0; i < events.length; i++) {
                                 let tokenOwner = await contractExclusiveRightsNFT.methods.ownerOf(events[i].returnValues.tokenId).call();
                                 if (accounts[0] === tokenOwner) {
@@ -47,7 +44,6 @@ function MySaleGallery() {
                                     let urlHash = await contractSBT.methods.getToken(sbt.tokenId).call();
                                     const authorAddress = await contractSBT.methods.getOwner().call();
                                     const author = await contract.methods.getUser(authorAddress).call();
-                                    const block = await web3.eth.getBlock(events[i].blockNumber);
                                     const json = await axios({
                                         method: "get",
                                         url: buildIPFSUrl(urlHash),
@@ -58,7 +54,6 @@ function MySaleGallery() {
                                         author: author.name,
                                         description: json.data.description,
                                         url: buildIPFSUrl(json.data.image),
-                                        date: formatDate(block.timestamp),
                                         price: parseInt(price)
                                     };
                                 }
@@ -164,7 +159,8 @@ function MySaleGallery() {
 
     return (
         <>
-            {isApproved ?
+            <h1>Vendre mes photos</h1>
+            {isApproved && photos.length > 0 &&
                 Object.keys(photos).map((i) => (
                     <div key={photos[i].id} className="jumbotron jumbotron-gallery">
                         <div className="row">
@@ -177,12 +173,13 @@ function MySaleGallery() {
                                 <h3>#{photos[i].id} {photos[i].title}</h3>
                                 <h4>par {photos[i].author}</h4>
                                 <p>{photos[i].description}</p>
-                                <p>Date d'authentification : {photos[i].date}</p>
                                 {
                                     photos[i].price === 0 ?
                                     <div>
-                                        <input type="number" placeholder="Prix" onChange={(e) => handlePriceChange(e, photos[i].id)} min="0" value={prices[photos[i].id] || ''}></input>
+                                        <input type="number" placeholder="Prix (en wei)" onChange={(e) => handlePriceChange(e, photos[i].id)} min="0" value={prices[photos[i].id] || ''}></input>
                                         <button type="button" onClick={(e) => sale(e, photos[i].id)}>Mettre en vente</button>
+                                        <br />
+                                        <span>1 ETH = 1000000000000000000 wei</span>
                                     </div>
                                     :
                                     <div>
@@ -194,7 +191,11 @@ function MySaleGallery() {
                         </div>
                     </div>
                 ))
-                :
+            }
+
+            {isApproved && photos.length === 0 && <p>Vous n'avez aucune photo à mettre en vente.</p>}
+
+            {!isApproved &&
                 <main role="main" className="container">
                     <div className="jumbotron">
                         <div className="row">

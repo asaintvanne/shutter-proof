@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.4.22 <0.9.0;
+pragma solidity 0.8.18;
 
 import "./PaternitySBT.sol";
 import "./ExclusiveRightsNFT.sol";
 import "../node_modules/@openzeppelin/contracts/utils/Address.sol";
 import "../node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+/// @title ShutterProof 
+/// @notice ShutterProof helps photographers and photo user to manage authencity and rights
+/// @dev main contract
+/// @author asaintvanne
 contract ShutterProof is ReentrancyGuard {
-
-    using Address for address;
 
     enum UserRole {
         Photographer,
@@ -24,19 +26,28 @@ contract ShutterProof is ReentrancyGuard {
         bool registered;
     }
 
+    /// @notice ShutterProof users informations
     mapping(address => User) users;
+
+    /// @notice Contract that manage photo exclusive rights
     ExclusiveRightsNFT exclusiveRightsNFT;
 
-    event UserRegistered(address, UserRole);
+    /// @notice UserRegistered event is emitted when a user is registered
+    /// @param userAdress New user address
+    /// @param role User role
+    event UserRegistered(address userAdress, UserRole role);
 
+    /// @dev Deploy exclusiveRightsNFT
     constructor() {
         exclusiveRightsNFT = new ExclusiveRightsNFT(this);
     }
 
+    /// @notice Register sender to be a app user
+    /// @param _name User name
+    /// @param _siret User SIRET
+    /// @param _role User role
     function register(string calldata _name, bytes14 _siret, UserRole _role) external
     {
-        require(!msg.sender.isContract(), "Contract cannot be registered");
-
         User memory user = users[msg.sender];
 
         require(!user.registered, 'User is already registered');
@@ -51,42 +62,34 @@ contract ShutterProof is ReentrancyGuard {
         users[msg.sender].role = _role;
         users[msg.sender].registered = true;
 
+        //SBT contract is only created if user is a photographer
         if (_role == UserRole.Photographer) {
             users[msg.sender].sbt = new PaternitySBT(msg.sender, exclusiveRightsNFT);
         }
     }
 
-    function getUser() view external returns (User memory)
-    {
-        return users[msg.sender];
-    }
-
+    /// @notice Get user informations
+    /// @param _address User address
     function getUser(address _address) view external returns (User memory)
     {
         return users[_address];
     }
 
-    function isRegistered() view external returns (bool)
+    /// @notice Get user informations
+    /// @param _address User address
+    function getPaternitySBT(address _address) view external returns(PaternitySBT)
     {
-        return users[msg.sender].registered;
+        require(address(users[_address].sbt) != address(0), "User has no PaternitySBT contract");
+
+        return users[_address].sbt;
     }
 
-    function getRole() view external returns (UserRole)
-    {
-        require(users[msg.sender].registered, "User is not registered");
-
-        return users[msg.sender].role;
-    }
-
-    function getPaternitySBT(address _user) view external returns(PaternitySBT)
-    {
-        require(address(users[_user].sbt) != address(0), "Use has no SBT contract");
-
-        return users[_user].sbt;
-    }
-
+    /// @notice Buy a NFT that represents exclusive rights
+    /// @param tokenId NFT id (in exclusiveRightsNFT contract)
     function buyExclusiveRights(uint256 tokenId) nonReentrant payable external
     {
+        require(users[msg.sender].registered, "Call is not registered");
+
         uint price = exclusiveRightsNFT.getPrice(tokenId);
         require(price > 0, "Photography is not for sale");
         require(msg.value >= price, "Insufficient payment");
@@ -94,7 +97,7 @@ contract ShutterProof is ReentrancyGuard {
         address seller = exclusiveRightsNFT.ownerOf(tokenId);
         exclusiveRightsNFT.safeTransferFrom(seller, msg.sender, tokenId);
 
-        (bool success1, ) = seller.call{value: msg.value}("");
+        (bool success1, ) = seller.call{value: price}("");
         require(success1, "Transfer to seller failed");
 
         uint256 refund = msg.value - price;
@@ -104,6 +107,7 @@ contract ShutterProof is ReentrancyGuard {
         }
     }
 
+    /// @notice Get the contract that manage exclusive rights
     function getExclusiveRightsNFT() view external returns(ExclusiveRightsNFT)
     {
         return exclusiveRightsNFT;
