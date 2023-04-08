@@ -25,6 +25,10 @@ body {
   width: 400px;
 }
 
+.input-price {
+  width: 250px;
+}
+
 .textarea-big {
   height: 8em;
 }

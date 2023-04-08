@@ -261,6 +261,11 @@ contract("ShutterProof", accounts => {
 
             expect(price.toNumber()).to.be.equal(0);
         });
+
+        it("Illegal unsale again", async () => {
+            await ExclusiveRightsNFTInstance.unsaleExclusiveRights(0, {from: account1});
+            await expectRevert(ExclusiveRightsNFTInstance.unsaleExclusiveRights.call(0, {from: account1}), "Not already in sale");
+        });
     });
 
     context("Shutterproof Buy NFT", async () => {

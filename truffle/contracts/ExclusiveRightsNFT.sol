@@ -51,6 +51,7 @@ contract ExclusiveRightsNFT is ERC721 {
     /// @param tokenId NFT id
     function unsaleExclusiveRights(uint tokenId) external onlyOwner(tokenId)
     {
+        require(salePrice[tokenId] > 0, "Not already in sale");
         salePrice[tokenId] = 0;
     }
 

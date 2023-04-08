@@ -12,7 +12,7 @@ function SaleGallery() {
     const [photos, setPhotos] = useState({});
 
     useEffect(() => {
-        const photosArray = [];
+        const photosArray = {};
         let contractSBT;
         let contractExclusiveRightsNFT;
         contract.methods.getExclusiveRightsNFT().call({ from: accounts[0] })
@@ -52,7 +52,6 @@ function SaleGallery() {
                         } catch (error) {
                             console.log(error);
                         }
-
                     }
                 }
                 setPhotos(photosArray);
@@ -88,7 +87,7 @@ function SaleGallery() {
     return (
         <>
             <h1>Les photos à vendre</h1>
-            {photos.length > 0 && Object.keys(photos).map((i) => (
+            {Object.keys(photos).length > 0 && Object.keys(photos).map((i) => (
                 <div key={photos[i].id} className="jumbotron jumbotron-gallery">
                     <div className="row">
                         <div className="col-sm-4 text-center">
@@ -109,7 +108,7 @@ function SaleGallery() {
                 </div>
             ))}
 
-            {photos.length === 0 && <p>Aucune photo n'est en vente.</p>}
+            {Object.keys(photos).length === 0 && <p>Aucune photo n'est en vente.</p>}
         </>
     )
 }

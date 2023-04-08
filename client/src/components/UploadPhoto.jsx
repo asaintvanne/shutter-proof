@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import useEth from "../contexts/EthContext/useEth";
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 import dotenv from 'react-dotenv';
 
@@ -12,9 +13,9 @@ function UploadPhoto() {
     const [formDisabled, setFormDisabled] = useState(false);
 
     const { state: { contract, artifactSBT, web3, accounts } } = useEth();
+    const navigate = useNavigate();
 
     const sendFileToIPFS = async (e) => {
-
         e.preventDefault();
 
         if (fileImg && title !== "" && desc !== "") {
@@ -54,9 +55,13 @@ function UploadPhoto() {
                 return contractSBT.methods.mint(result.data.IpfsHash).send({ from: accounts[0] });
             })
             .then(result => {
+                e.target[0].value = null;
+                setTitle("");
+                setDesc("");
                 toast.success("La photo est authentifiée", {
                     position: toast.POSITION.TOP_LEFT
                 });
+                navigate('/my-gallery');
             })
             .catch(error => {
                 toast.error("Erreur lors de l'authentification de la photo", {

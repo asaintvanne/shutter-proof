@@ -1,4 +1,4 @@
-import {Routes, Route, } from "react-router-dom";
+import {Routes, Route, Link} from "react-router-dom";
 import useApp from "../contexts/AppContext/useApp";
 import AccountInfo from './AccountInfo.jsx';
 import MyGallery from "./MyGallery.jsx";
@@ -28,9 +28,9 @@ function RegisteredZone() {
     return (
         <>
             <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-                <a href="/">
+                <Link to="/">
                     <img id="mini-logo" src={buildIPFSUrl("QmSNHq1zmmrQSqcjtzEJwwuYbBpUWYXRrkWRiMT7hTefQn")} alt="" />
-                </a>
+                </Link>
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav mr-auto">
                         {
@@ -38,8 +38,8 @@ function RegisteredZone() {
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="/" id="dropdown1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mes photos</a>
                                 <div className="dropdown-menu" aria-labelledby="dropdown1">
-                                    <a className="dropdown-item" href="/my-gallery">Ma galerie</a>
-                                    <a className="dropdown-item" href="/upload">Ajouter une photo</a>
+                                    <Link className="dropdown-item" to="/my-gallery">Ma galerie</Link>
+                                    <Link className="dropdown-item" to="/upload">Ajouter une photo</Link>
                                 </div>
                             </li>
                         }
@@ -47,8 +47,8 @@ function RegisteredZone() {
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="/" id="dropdown2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Achat/Vente</a>
                             <div className="dropdown-menu" aria-labelledby="dropdown2">
-                                <a className="dropdown-item" href="/sale-gallery">Acheter des photos</a>
-                                <a className="dropdown-item" href="/my-sale-gallery">Vendre mes photos</a>
+                                <Link className="dropdown-item" to="/sale-gallery">Acheter des photos</Link>
+                                <Link className="dropdown-item" to="/my-sale-gallery">Vendre mes photos</Link>
                             </div>
                         </li>
                     </ul>

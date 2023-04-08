@@ -13,7 +13,7 @@ function MySaleGallery() {
     const [isApproved, setApproved] = useState(false);
 
     useEffect(() => {
-        const photosArray = [];
+        const photosArray = {};
         let contractSBT;
         let contractExclusiveRightsNFT;
         contract.methods.getExclusiveRightsNFT().call({ from: accounts[0] })
@@ -58,6 +58,7 @@ function MySaleGallery() {
                                     };
                                 }
                             }
+                            console.log(photosArray);
                             setPhotos(photosArray);
                         })
                         .catch(error => {
@@ -99,7 +100,9 @@ function MySaleGallery() {
                     return contractExclusiveRightsNFT.methods.saleExclusiveRights(photoId, prices[photoId]).send({ from: accounts[0] });
                 })
                 .then(result => {
+                    console.log(photos);
                     const newPhotos = {...photos};
+
                     newPhotos[photoId].price = prices[photoId];
                     setPhotos(newPhotos);
                     toast.success("La photo est mise en vente", {
@@ -160,7 +163,7 @@ function MySaleGallery() {
     return (
         <>
             <h1>Vendre mes photos</h1>
-            {isApproved && photos.length > 0 &&
+            {isApproved && Object.keys(photos).length > 0 &&
                 Object.keys(photos).map((i) => (
                     <div key={photos[i].id} className="jumbotron jumbotron-gallery">
                         <div className="row">
@@ -176,7 +179,7 @@ function MySaleGallery() {
                                 {
                                     photos[i].price === 0 ?
                                     <div>
-                                        <input type="number" placeholder="Prix (en wei)" onChange={(e) => handlePriceChange(e, photos[i].id)} min="0" value={prices[photos[i].id] || ''}></input>
+                                        <input className="input-price" type="number" placeholder="Prix (en wei)" onChange={(e) => handlePriceChange(e, photos[i].id)} min="0" value={prices[photos[i].id] || ''}></input>
                                         <button type="button" onClick={(e) => sale(e, photos[i].id)}>Mettre en vente</button>
                                         <br />
                                         <span>1 ETH = 1000000000000000000 wei</span>
@@ -193,7 +196,7 @@ function MySaleGallery() {
                 ))
             }
 
-            {isApproved && photos.length === 0 && <p>Vous n'avez aucune photo à mettre en vente.</p>}
+            {isApproved && Object.keys(photos).length === 0 && <p>Vous n'avez aucune photo à mettre en vente.</p>}
 
             {!isApproved &&
                 <main role="main" className="container">
