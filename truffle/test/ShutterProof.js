@@ -4,7 +4,6 @@ const ExclusiveRightsNFT = artifacts.require("ExclusiveRightsNFT");
 
 const {constants, BN, expectRevert, expectEvent} = require('../node_modules/@openzeppelin/test-helpers');
 const {expect} = require('chai');
-const { web3 } = require('@openzeppelin/test-helpers/src/setup');
 
 contract("ShutterProof", accounts => {
 
