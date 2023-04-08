@@ -9,6 +9,9 @@ node_modules
 build
 client/src/contracts
 client/*/src/contracts
+truffle/artifacts
+truffle/cache
+truffle/coverage.json
 
 # Testing
 coverage

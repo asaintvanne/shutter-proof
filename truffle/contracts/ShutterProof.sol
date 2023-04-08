@@ -86,6 +86,7 @@ contract ShutterProof is ReentrancyGuard {
     }
 
     /// @notice Buy a NFT that represents exclusive rights
+    /// @dev Protected from reentrance attack
     /// @param tokenId NFT id (in exclusiveRightsNFT contract)
     function buyExclusiveRights(uint256 tokenId) nonReentrant payable external
     {

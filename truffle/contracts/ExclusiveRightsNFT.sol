@@ -62,6 +62,7 @@ contract ExclusiveRightsNFT is ERC721 {
         PaternitySBT paternitySBT = PaternitySBT(msg.sender);
         address owner = paternitySBT.getOwner();
 
+        //Protect form attack by contract implements same functions like PaternitySBT (see PaternitySBTAttacker)
         require(msg.sender == address(_shutterProof.getUser(owner).sbt), "Caller is not allowed to mint");
 
         _mint(owner, _balance);
@@ -77,7 +78,7 @@ contract ExclusiveRightsNFT is ERC721 {
     /// @param to Token recipient (others params unused)
     function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize) internal view override
     {
-        require(to == address(0) || _shutterProof.getUser(to).registered, "Receiver must be a Shutterproof user");
+        require(_shutterProof.getUser(to).registered, "Receiver must be a Shutterproof user");
     }
 
     /// @notice Operations after transfer

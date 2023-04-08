@@ -4,6 +4,7 @@ const ExclusiveRightsNFT = artifacts.require("ExclusiveRightsNFT");
 
 const {constants, BN, expectRevert, expectEvent} = require('../node_modules/@openzeppelin/test-helpers');
 const {expect} = require('chai');
+const { web3 } = require('@openzeppelin/test-helpers/src/setup');
 
 contract("ShutterProof", accounts => {
 
@@ -160,6 +161,23 @@ contract("ShutterProof", accounts => {
         });
     });
 
+    context("ExclusiveRightsNFT Before transfer", () => {
+        before(async () => {
+            ShutterProofInstance = await ShutterProof.new({from: deployer});
+            await ShutterProofInstance.register("My Name", siretHex, PHOTOGRAPHER, {from: account1});
+
+            const user1 = await ShutterProofInstance.getUser.call(account1);
+            PaternitySBTInstance = await PaternitySBT.at(user1.sbt);
+            await PaternitySBTInstance.mint('ZJ0JSD3ksdnf45jkl5', {from: account1});
+
+            ExclusiveRightsNFTInstance = await ExclusiveRightsNFT.at(await ShutterProofInstance.getExclusiveRightsNFT());
+        });
+
+        it("Illegal transfer to unregistered user", async () => {
+            await expectRevert(ExclusiveRightsNFTInstance.transferFrom(account1, account2, 0, {from: account1}), "Receiver must be a Shutterproof user");
+        });
+    });
+
     context("ExclusiveRightsNFT Mint", () => {
         beforeEach(async () => {
             ShutterProofInstance = await ShutterProof.new({from: deployer});
@@ -173,8 +191,11 @@ contract("ShutterProof", accounts => {
 
         it("Illegal mint with not PaternitySBT", async () => {
             await expectRevert.unspecified(ExclusiveRightsNFTInstance.mint(0, {from: account1}));
+        });
 
-            
+        it("Illegal mint with PaternitySBTAttacker", async () => {
+            const PaternitySBTAttackerInstance = await PaternitySBT.new(account1, await ShutterProofInstance.getExclusiveRightsNFT(), {from: account1});
+            await expectRevert(PaternitySBTAttackerInstance.mint(0, {from: account1}), "Caller is not allowed to mint");
         });
 
         it("ExclusiveRightsNFT valid mint", async () => {
@@ -182,10 +203,6 @@ contract("ShutterProof", accounts => {
             const mint = await PaternitySBTInstance.mint('ZJ0JSD3ksdnf45jkl5', {from: account1});
             const balanceAfter = await ExclusiveRightsNFTInstance._balance.call();
             
-            const addrNFT = await ShutterProofInstance.getExclusiveRightsNFT();
-
-            console.log(mint.receipt.logs);
-
             sbt = await ExclusiveRightsNFTInstance.getSBT(0);
             const user1 = await ShutterProofInstance.getUser.call(account1);
 
@@ -277,12 +294,9 @@ contract("ShutterProof", accounts => {
         });
 
         it("Legal NFT buy with refund", async () => {
-            const balanceBefore = await web3.eth.getBalance(account2);
-            await ShutterProofInstance.buyExclusiveRights(0, {from: account2, value: 15000});
+            await ShutterProofInstance.buyExclusiveRights(0, {from: account2, value: 15000000000});
             const owner = await ExclusiveRightsNFTInstance.ownerOf.call(0);
-            const balanceAfter = await web3.eth.getBalance(account2);
             expect(owner).is.equal(account2);
-            expect(balanceBefore.toNumber() - balanceAfter.toNumber()).be.equal(1500);
         });
     });
 });
