@@ -26,7 +26,6 @@ function MySaleGallery() {
                 if (isShutterProofApproved) {
                     contract.methods.getExclusiveRightsNFT().call({ from: accounts[0] })
                         .then(contractExclusiveRightsNFTAddress => {
-                            console.log('HERE');
                             contractExclusiveRightsNFT = new web3.eth.Contract(artifactSaleNFT.abi, contractExclusiveRightsNFTAddress);
                             return contractExclusiveRightsNFT.getPastEvents("Transfer", {
                                 filter: {to: accounts[0]},
@@ -58,7 +57,6 @@ function MySaleGallery() {
                                     };
                                 }
                             }
-                            console.log(photosArray);
                             setPhotos(photosArray);
                         })
                         .catch(error => {
@@ -100,9 +98,7 @@ function MySaleGallery() {
                     return contractExclusiveRightsNFT.methods.saleExclusiveRights(photoId, prices[photoId]).send({ from: accounts[0] });
                 })
                 .then(result => {
-                    console.log(photos);
                     const newPhotos = {...photos};
-
                     newPhotos[photoId].price = prices[photoId];
                     setPhotos(newPhotos);
                     toast.success("La photo est mise en vente", {

@@ -23,7 +23,6 @@ function MyGallery() {
                 });
             })
             .then(async (events) => {
-                console.log(events);
                 for (let i = 0; i < events.length; i++) {
                     const urlHash = await contractSBT.methods.getToken(events[i].returnValues[0]).call();
                     const block = await web3.eth.getBlock(events[i].blockNumber);
