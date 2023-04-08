@@ -20,7 +20,7 @@ contract ExclusiveRightsNFT is ERC721 {
     /// @notice ShutterProof contract
     ShutterProof _shutterProof;
     /// @notice Token index
-    uint256 private _balance;
+    uint256 public _balance;
     /// @notice Sale price for each NTF
     mapping(uint256 => uint) salePrice;
     /// @notice PaternitySBT for each NTF

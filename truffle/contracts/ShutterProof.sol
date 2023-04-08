@@ -52,7 +52,6 @@ contract ShutterProof is ReentrancyGuard {
 
         require(!user.registered, 'User is already registered');
         require(keccak256(bytes(_name)) != keccak256(bytes("")), "Name cannot be empty");
-        require(_siret.length > 0, "SIRET cannot be empty");
         for(uint i = 0; i < 14; i++) {
             require(_siret[i] >= '0' && _siret[i] <= '9', "SIRET is not well formed");
         }
@@ -66,6 +65,8 @@ contract ShutterProof is ReentrancyGuard {
         if (_role == UserRole.Photographer) {
             users[msg.sender].sbt = new PaternitySBT(msg.sender, exclusiveRightsNFT);
         }
+
+        emit UserRegistered(msg.sender, _role);
     }
 
     /// @notice Get user informations
@@ -88,13 +89,16 @@ contract ShutterProof is ReentrancyGuard {
     /// @param tokenId NFT id (in exclusiveRightsNFT contract)
     function buyExclusiveRights(uint256 tokenId) nonReentrant payable external
     {
-        require(users[msg.sender].registered, "Call is not registered");
+        require(users[msg.sender].registered, "Caller is not registered");
 
         uint price = exclusiveRightsNFT.getPrice(tokenId);
         require(price > 0, "Photography is not for sale");
-        require(msg.value >= price, "Insufficient payment");
 
         address seller = exclusiveRightsNFT.ownerOf(tokenId);
+        require(seller != msg.sender, "Buyer cannot buy his own NFT");
+
+        require(msg.value >= price, "Insufficient payment");
+
         exclusiveRightsNFT.safeTransferFrom(seller, msg.sender, tokenId);
 
         (bool success1, ) = seller.call{value: price}("");

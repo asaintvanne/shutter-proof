@@ -34,7 +34,7 @@ contract PaternitySBT {
     /// @param _urlHash IPFS URL hash
     function mint(string calldata _urlHash) external returns(uint256)
     {
-        require(owner == msg.sender, "Not allowed to mint");
+        require(owner == msg.sender, "Caller is not owner");
 
         uint tokenId = balance;
         tokens[tokenId] = _urlHash;
