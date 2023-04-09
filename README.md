@@ -11,7 +11,7 @@ La vidéo de démonstration est consultable [ici](https://e.pcloud.link/publink/
 ![Schéma introuvable](https://ipfs.io/ipfs/QmcBECQvktGDByfSZEg8BgPjooBZotuV5Lxzq5y9ETcwbt)
 
 ## Déploiement
-La dApp est déployée sur [Vercel](https://shutterproof.vercel.app/). Les smart contracts sont deployés sur Mumbai. Un seul contrat est déployé manuellement, ShutterProof. Celui ci déploie à son tour le contrat ExclusiveRightsNFT afin de gérer les droits patrimoniaux par NFT. Le contrat PaternitySBT, gérant la preuve de paternité, est déployé à la volée lors de l'enregistrement d'un photographe. La certification équivaut à l'obtention du SBT.
+La dApp est déployée sur [Vercel](https://shutterproof.vercel.app/). Les smart contracts sont deployés sur Mumbai. Un seul contrat est déployé, ShutterProof. Celui ci déploie à son tour une unique instance du contrat ExclusiveRightsNFT afin de gérer les droits patrimoniaux par NFT. Une instance de PaternitySBT, gérant la preuve de paternité, est déployé à la volée lors de l'enregistrement d'un photographe. La certification équivaut à l'obtention du SBT.
 
 ## Tests
 
