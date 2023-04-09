@@ -1,6 +1,6 @@
 # ShutterProof
 
-ShutterProof est une application décentralisée destinée aux photographes professionnels et leurs clients. Elle permet aux photographes de certifier la paternité de ses oeuvres et de gérer les droits d'auteur. Les droits d'autres sont divibles en deux grandes familles : les droits moraux (incessibles par l'auteur, donnant lieu à l'attribution d'un SBT), et les droits patrimoniaux cessibles par l'auteur, donnant lieu à l'attribution d'un NFT
+ShutterProof est une application décentralisée destinée aux photographes professionnels et leurs clients. Elle permet aux photographes de certifier la paternité de ses oeuvres et de gérer les droits d'auteur. Les droits d'autres sont composés des droits moraux (incessibles par l'auteur, donnant lieu à l'attribution d'un SBT), et des droits patrimoniaux (cessibles par l'auteur, donnant lieu à l'attribution d'un NFT).
 
 ## Démonstration
 
@@ -26,7 +26,7 @@ Seuls l'utilisation du modifier nonReentrant de OpenZeppelin, ainsi que l'échec
   - Consulter les photos dont je suis l'auteur
   - Mettre en vente les droits exclusifs de mes photos
   - Acheter les droits exclusifs de photos
-- En tant que votant :
+- En tant que client :
   - Mettre en vente les droits exclusifs de photos de photos achetés auparavant
   - Acheter les droits exclusifs de photos
   
