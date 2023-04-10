@@ -248,7 +248,7 @@ contract("ShutterProof", accounts => {
             ExclusiveRightsNFTInstance = await ExclusiveRightsNFT.at(await ShutterProofInstance.getExclusiveRightsNFT());
     
             await PaternitySBTInstance.mint('ZJ0JSD3ksdnf45jkl5', {from: account1});
-            ExclusiveRightsNFTInstance.saleExclusiveRights(0, 1500, {from: account1});
+            await ExclusiveRightsNFTInstance.saleExclusiveRights(0, 1500, {from: account1});
         });
 
         it("Illegal unsale", async () => {
